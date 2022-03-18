@@ -7,25 +7,22 @@ const bodyParser = require('body-parser');
 const http = require('http');
 const couchbase = require('couchbase');
 
-try {
-    couchbase.connect('couchbase://localhost:8091', {
+    couchbase.connect('couchbase://10.233.6.250', {
     //process.env.CLUSTER, process.env.CLUSTER_PASSWORD dùng để lấy biến CLUSTER, CLUSTER_PASSWORD trong file .env
-    username: process.env.CLUSTER,
-    password: process.env.CLUSTER_PASSWORD,
+        username: process.env.CLUSTER,
+        password: process.env.CLUSTER_PASSWORD,
     }).then((cluster) => {
         app.locals.couchbase = couchbase;
         app.locals.cluster = cluster;
         app.locals.travel = cluster.bucket('travel-sample');
         app.locals.eventing = cluster.bucket('eventing');
     })
-}
-catch(err) {
-    throw err;
-}
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+//app.use(express.static(path.join(__dirname, '../client')));
 
 //Config cors
 app.use(function(req, res, next) {

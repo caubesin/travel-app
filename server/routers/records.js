@@ -3,7 +3,8 @@ const router = express.Router();
 const controller = require('../controller/records_ctrl');
 
 router.get('/destinations', controller.getDestinations);
-router.get('/hotels/byCity/:id', controller.getHotelsByIdOnCity);
-router.get('/select/geo', controller.getGeoBySelect);
+router.get('/hotels/byCity/:cityName', controller.getHotelByCity);
+router.get('/hotels/byIdOnCity/:id', controller.getHotelsByIdOnCity);
+router.post('/select/geo', controller.getGeoBySelect);
 
 module.exports = router;

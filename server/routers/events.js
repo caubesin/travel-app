@@ -11,7 +11,7 @@ router.post('/poi', async function(req, res, next) {
  
   let msg = { event: 'poi' };
  
-  msg.data = JSON.stringify(req.body);
+  msg.data = JSON.stringify(req.body.data);
  
   poi.send(msg);
 });
