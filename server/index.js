@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const http = require('http');
 const couchbase = require('couchbase');
 
-    couchbase.connect('couchbase://10.233.6.250', {
+    couchbase.connect('couchbase://192.168.1.250', {
     //process.env.CLUSTER, process.env.CLUSTER_PASSWORD dùng để lấy biến CLUSTER, CLUSTER_PASSWORD trong file .env
         username: process.env.CLUSTER,
         password: process.env.CLUSTER_PASSWORD,
