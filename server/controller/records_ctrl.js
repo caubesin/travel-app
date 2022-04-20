@@ -26,7 +26,7 @@ exports.findCityToGetDestinations = async (req, res) => {
     const city = req.body.city;
     
     try {
-        const queryCity = `SELECT hotel.city as name
+        /*const queryCity = `SELECT hotel.city as name
         FROM \`travel-sample\`.inventory.hotel
         WHERE hotel.city = \'${city.name}\'`
 
@@ -35,7 +35,7 @@ exports.findCityToGetDestinations = async (req, res) => {
         if(cityResult.rows.length !== 0) {
             res.redirect(`/records/hotels/byCity/${city.name}`);
         }
-        else {
+        else {*/
             const getHotel = async (lat, lng, q) => {
                 var newData = [];
                 var hotelData = [];
@@ -72,7 +72,14 @@ exports.findCityToGetDestinations = async (req, res) => {
             const addHotel = hotels.map((item) => {
                 item = {
                     ...item,
-                    city: city.name
+                    city: city.name,
+                    type: "hotel",
+                    geo : {
+                        lat: item.position[0],
+                        lon: item.position[1]
+                    },
+                    name: item.title,
+                    address:item.vicinity,
                 }
                 const query = `UPSERT INTO \`travel-sample\`.inventory.hotel (KEY, VALUE) VALUES(\'hotel_${item.id}\', ${JSON.stringify(item)})`;
                 return new Promise((resolve, rejects) => {
@@ -87,7 +94,13 @@ exports.findCityToGetDestinations = async (req, res) => {
             const addAirPort = airports.map((item) => {
                 item = {
                     ...item,
-                    city: city.name
+                    city: city.name,
+                    type: "airport",
+                    geo : {
+                        lat: item.position[0],
+                        lon: item.position[1]
+                    },
+
                 }
                 const query = `UPSERT INTO \`travel-sample\`.inventory.airport (KEY, VALUE) VALUES(\'airport_${item.id}\', ${JSON.stringify(item)})`;
                 return new Promise((resolve, rejects) => {
@@ -100,8 +113,8 @@ exports.findCityToGetDestinations = async (req, res) => {
                 })
             })
             Promise.all[addHotel, addAirPort]
-            res.send(await cluster.query(queryCity))
-        }
+            res.redirect(`/records/hotels/byCity/${city.name}`);
+        //}
     }
     catch(err) {
         res.status(500).send({ error: err });
@@ -117,7 +130,8 @@ exports.getHotelByCity = async (req, res) => {
         USE HASH(probe)
         ON hotel.city = airport.city
         WHERE hotel.city = '${req.params.cityName}'
-        LIMIT 5`;
+        LIMIT 5`
+        //OFFSET ${req.query.page * 5}`;
 
     try {
         const result = await cluster.query(query);
@@ -130,7 +144,6 @@ exports.getHotelByCity = async (req, res) => {
 
 exports.getHotelsByIdOnCity = async (req, res) => {
     const cluster = req.app.locals.cluster;
- 
     /*const query = `SELECT hotel.name, hotel.address, airport.name, airport.icao, hotel.geo
               FROM \`travel-sample\`.inventory.airport
               INNER JOIN \`travel-sample\`.inventory.hotel

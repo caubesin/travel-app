@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const http = require('http');
 const couchbase = require('couchbase');
 
-    couchbase.connect('couchbase://192.168.1.250', {
+    couchbase.connect('couchbase://10.233.3.250', {
     //process.env.CLUSTER, process.env.CLUSTER_PASSWORD dùng để lấy biến CLUSTER, CLUSTER_PASSWORD trong file .env
         username: process.env.CLUSTER,
         password: process.env.CLUSTER_PASSWORD,
@@ -33,9 +33,12 @@ app.use(function(req, res, next) {
 
 //Route
 const records = require('./routers/records');
-const events = require('./routers/events');
+//const events = require('./routers/events');
 app.use('/records', records);
-app.use('/events', events);
+//app.use('/events', events);
+app.get("/", (req, res) => {
+    res.send("a")
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -56,7 +59,24 @@ app.use(function(err, req, res, next) {
 });
 
 //Server listen
-http.createServer(app).listen(process.env.PORT, () => {
+const server = http.createServer(app).listen(process.env.PORT, () => {
     //process.env.PORT dùng để lấy biến PORT trong file .env
     console.log(`Server Listening on http://localhost:${process.env.PORT}`)
 })
+
+const { Server } = require("socket.io");
+const io = new Server(server, {
+    cors: {
+      origin: "*",
+      allowedHeaders: ["*"],
+      credentials: true,
+      methods: ["GET", "POST"]
+    }
+});
+require('./socket')(io);
+
+
+
+module.exports = {
+    io
+}

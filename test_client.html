@@ -7,10 +7,12 @@
     <title>Document</title>
 </head>
 <body>
+    <script src="./socket.io.js"></script>
     <script>
-        const es = new EventSource('http://localhost:8081/events/poi');
-        es.addEventListener('poi', (e) => {
-            console.log(JSON.parse(JSON.parse(e.data)))
+        const socket = io("http://10.233.3.208:8081/");
+        //socket.emit("selectGeo")
+        socket.on("getGeo", (data) => {
+            console.log(data)
         })
     </script>
 </body>
